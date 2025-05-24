@@ -1,0 +1,11 @@
+Matter_ID,Client_Name,Matter_Type,Responsible_Solicitor,Date_Opened,Status,Billable_Amount,Time_Recorded_Hours,Priority_Level,Last_Activity_Date
+M00001,Smith & Co Ltd,Commercial Contract,James Wilson,2025-05-24 07:35:42,Active,15750.0,45.5,High,2025-05-24 07:35:42
+M00002,John Davidson,Property Settlement,Sarah Chen,2025-05-14 07:35:42,Active,8500.0,22.0,Medium,2025-05-19 07:35:42
+M00003,Emma Wilson,Civil Litigation,Michael Roberts,2025-05-04 07:35:42,Pending,12300.0,35.75,High,2025-05-14 07:35:42
+M00004,Tech Solutions Inc,Corporate Advisory,Emma Thompson,2025-04-24 07:35:42,Active,25000.0,68.25,Urgent,2025-05-09 07:35:42
+M00005,Robert Brown,Family Law,David Miller,2025-04-14 07:35:42,Closed,9800.0,28.5,Low,2025-05-04 07:35:42
+M00006,Sarah Parker,Conveyancing,Lisa Wong,2025-04-04 07:35:42,On Hold,7500.0,20.0,Medium,2025-04-29 07:35:42
+M00007,Green Enterprises,Commercial Lease,Robert Smith,2025-03-25 07:35:42,Active,18900.0,52.25,High,2025-04-24 07:35:42
+M00008,Michael Thompson,Estate Planning,Jennifer Davis,2025-03-15 07:35:42,Pending,,,Medium,2025-04-19 07:35:42
+M00009,Anderson Family Trust,Employment Law,Andrew Johnson,2025-03-05 07:35:42,Closed,11200.0,32.0,Low,2025-04-14 07:35:42
+M00010,Claire Williams,Intellectual Property,Michelle Lee,2025-02-23 07:35:42,Active,16400.0,47.75,High,2025-04-09 07:35:42
