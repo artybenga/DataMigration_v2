@@ -1,20 +1,16 @@
 import pandas as pd
-import re
 import logging
 from pathlib import Path
-from sqlalchemy import create_engine, text
-from sqlalchemy.types import String, Integer, Float, DateTime, Boolean
-from typing import Dict, Any
-
+from sqlalchemy import text
 from utils.db_config import DatabaseConfig
 from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                             QPushButton, QLabel, QFileDialog, QComboBox,
                             QTableWidget, QTableWidgetItem, QTextEdit,
                             QProgressBar, QMessageBox, QFrame, QScrollArea,
-                            QSplitter, QSizePolicy, QApplication)
-from PyQt6.QtCore import Qt, QTimer, QSize
-from PyQt6.QtGui import QFont, QPalette, QColor, QIcon
-
+                            QSizePolicy, QApplication)
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor
+from utils.utils import clean_column_name
 
 class ModernFrame(QFrame):
     """A modern styled frame with consistent appearance"""
@@ -330,7 +326,7 @@ class MainWindow(QMainWindow):
                 self.widget.append(msg)
 
         log_handler = QTextEditLogger(self.log_display)
-        formatter = logging.Formatter('[%(asctime)s UTC] [%(user)s] - %(message)s',
+        formatter = logging.Formatter('[%(asctime)s UTC] - %(message)s',
                                       datefmt='%Y-%m-%d %H:%M:%S')
 
         # Add user information to the logger
@@ -338,7 +334,6 @@ class MainWindow(QMainWindow):
 
         def record_factory(*args, **kwargs):
             record = old_factory(*args, **kwargs)
-            record.user = 'artybenga'  # Set the current user
             return record
 
         logging.setLogRecordFactory(record_factory)
@@ -346,55 +341,6 @@ class MainWindow(QMainWindow):
         log_handler.setFormatter(formatter)
         self.logger.addHandler(log_handler)
         self.log_message("Application started")
-
-    def clean_column_name(self, column_name: str) -> str:
-        """Clean column names by replacing spaces with underscores and removing special characters"""
-        # Replace spaces and special characters with underscore
-        clean_name = re.sub(r'[^a-zA-Z0-9_]', '_', str(column_name))
-        # Replace multiple underscores with single underscore
-        clean_name = re.sub(r'_+', '_', clean_name)
-        # Remove leading/trailing underscores
-        clean_name = clean_name.strip('_').lower()
-        return clean_name
-
-    def get_sql_type(self, column: pd.Series) -> Any:
-        """Determine SQL type based on DataFrame column content"""
-        # Get unique non-null values
-        unique_values = column.dropna().unique()
-
-        if len(unique_values) == 0:
-            return String  # Default to String for empty columns
-
-        # Check if all values are boolean-like
-        if all(isinstance(x, bool) or x in [0, 1, '0', '1', 'True', 'False', 'true', 'false']
-               for x in unique_values):
-            return Boolean
-
-        # Check if all values are integer-like
-        try:
-            if all(float(x).is_integer() for x in unique_values):
-                if all(-2147483648 <= float(x) <= 2147483647 for x in unique_values):
-                    return Integer
-                return String  # Use string for integers outside standard range
-        except (ValueError, TypeError):
-            pass
-
-        # Check if all values are float-like
-        try:
-            if all(isinstance(float(x), float) for x in unique_values):
-                return Float
-        except (ValueError, TypeError):
-            pass
-
-        # Check if all values are datetime-like
-        try:
-            if all(pd.to_datetime(unique_values, errors='raise')):
-                return DateTime
-        except (ValueError, TypeError):
-            pass
-
-        # Default to String if no other type matches
-        return String
 
     def select_file(self):
         """Handle file selection with improved dialog"""
@@ -505,7 +451,10 @@ class MainWindow(QMainWindow):
             df = self.dataframes[current_sheet]
 
             # Generate table name from sheet name
-            table_name = self.clean_column_name(current_sheet)
+            table_name = clean_column_name(current_sheet)
+
+            # Clean dataframe column names
+            df.columns = [clean_column_name(col) for col in df.columns]
 
             # Initialize database connection using your DatabaseConfig
             db_config = DatabaseConfig(self.logger)
