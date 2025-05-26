@@ -1,15 +1,19 @@
-from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                             QPushButton, QLabel, QFileDialog, QComboBox,
-                             QTableWidget, QTableWidgetItem, QTextEdit,
-                             QProgressBar, QMessageBox, QFrame, QScrollArea,
-                             QSplitter, QSizePolicy)
-from PyQt6.QtCore import Qt, QTimer, QSize
-from PyQt6.QtGui import QFont, QPalette, QColor, QIcon
 import pandas as pd
-import os
+import re
 import logging
 from pathlib import Path
-from datetime import datetime
+from sqlalchemy import create_engine, text
+from sqlalchemy.types import String, Integer, Float, DateTime, Boolean
+from typing import Dict, Any
+
+from utils.db_config import DatabaseConfig
+from PyQt6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+                            QPushButton, QLabel, QFileDialog, QComboBox,
+                            QTableWidget, QTableWidgetItem, QTextEdit,
+                            QProgressBar, QMessageBox, QFrame, QScrollArea,
+                            QSplitter, QSizePolicy, QApplication)
+from PyQt6.QtCore import Qt, QTimer, QSize
+from PyQt6.QtGui import QFont, QPalette, QColor, QIcon
 
 
 class ModernFrame(QFrame):
@@ -100,6 +104,7 @@ class MainWindow(QMainWindow):
     def __init__(self, logger):
         super().__init__()
         self.logger = logger
+        self.db_connect = DatabaseConfig(self.logger)
         self.dataframes = {}
         self.init_ui()
         self.setup_logger()
@@ -325,11 +330,71 @@ class MainWindow(QMainWindow):
                 self.widget.append(msg)
 
         log_handler = QTextEditLogger(self.log_display)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s',
+        formatter = logging.Formatter('[%(asctime)s UTC] [%(user)s] - %(message)s',
                                       datefmt='%Y-%m-%d %H:%M:%S')
+
+        # Add user information to the logger
+        old_factory = logging.getLogRecordFactory()
+
+        def record_factory(*args, **kwargs):
+            record = old_factory(*args, **kwargs)
+            record.user = 'artybenga'  # Set the current user
+            return record
+
+        logging.setLogRecordFactory(record_factory)
+
         log_handler.setFormatter(formatter)
         self.logger.addHandler(log_handler)
         self.log_message("Application started")
+
+    def clean_column_name(self, column_name: str) -> str:
+        """Clean column names by replacing spaces with underscores and removing special characters"""
+        # Replace spaces and special characters with underscore
+        clean_name = re.sub(r'[^a-zA-Z0-9_]', '_', str(column_name))
+        # Replace multiple underscores with single underscore
+        clean_name = re.sub(r'_+', '_', clean_name)
+        # Remove leading/trailing underscores
+        clean_name = clean_name.strip('_').lower()
+        return clean_name
+
+    def get_sql_type(self, column: pd.Series) -> Any:
+        """Determine SQL type based on DataFrame column content"""
+        # Get unique non-null values
+        unique_values = column.dropna().unique()
+
+        if len(unique_values) == 0:
+            return String  # Default to String for empty columns
+
+        # Check if all values are boolean-like
+        if all(isinstance(x, bool) or x in [0, 1, '0', '1', 'True', 'False', 'true', 'false']
+               for x in unique_values):
+            return Boolean
+
+        # Check if all values are integer-like
+        try:
+            if all(float(x).is_integer() for x in unique_values):
+                if all(-2147483648 <= float(x) <= 2147483647 for x in unique_values):
+                    return Integer
+                return String  # Use string for integers outside standard range
+        except (ValueError, TypeError):
+            pass
+
+        # Check if all values are float-like
+        try:
+            if all(isinstance(float(x), float) for x in unique_values):
+                return Float
+        except (ValueError, TypeError):
+            pass
+
+        # Check if all values are datetime-like
+        try:
+            if all(pd.to_datetime(unique_values, errors='raise')):
+                return DateTime
+        except (ValueError, TypeError):
+            pass
+
+        # Default to String if no other type matches
+        return String
 
     def select_file(self):
         """Handle file selection with improved dialog"""
@@ -425,6 +490,99 @@ class MainWindow(QMainWindow):
         self.log_message(f"Updated preview for sheet: {current_sheet} "
                          f"(showing {preview_rows} of {len(df)} rows)")
 
+    def import_data(self):
+        """Import data to PostgreSQL database with progress tracking"""
+        try:
+            # Disable import button and show progress bar
+            self.import_btn.setEnabled(False)
+            self.progress_bar.show()
+            self.progress_bar.setValue(0)
+
+            current_sheet = self.df_selector.currentText()
+            if current_sheet not in self.dataframes:
+                raise ValueError(f"Sheet {current_sheet} not found in loaded data")
+
+            df = self.dataframes[current_sheet]
+
+            # Generate table name from sheet name
+            table_name = self.clean_column_name(current_sheet)
+
+            # Initialize database connection using your DatabaseConfig
+            db_config = DatabaseConfig(self.logger)
+
+            # Explicit connection check
+            if not db_config.connect():
+                raise Exception("Failed to establish database connection")
+
+            if db_config.engine is None:
+                raise Exception("Database engine not properly initialized")
+
+            self.log_message(f"Starting import of {len(df)} rows to table '{table_name}'")
+
+            try:
+                # Verify connection is still valid before creating table
+                with db_config.engine.connect() as conn:
+                    # Create/Replace table using your existing method
+                    if not db_config.create_table_from_df(df, table_name):
+                        raise Exception(f"Failed to create table {table_name}")
+
+                    # Update progress to show table creation is complete
+                    self.progress_bar.setValue(20)
+                    QApplication.processEvents()
+
+                    total_rows = len(df)
+                    rows_processed = 0
+
+                    # Process in batches
+                    for i in range(0, total_rows, 1000):
+                        batch = df.iloc[i:min(i + 1000, total_rows)]
+
+                        try:
+                            # Use the same table creation method but with 'append' instead of 'replace'
+                            batch.to_sql(table_name, db_config.engine, if_exists='append', index=False)
+
+                            # Update progress
+                            rows_processed += len(batch)
+                            progress = int((rows_processed / total_rows * 80) + 20)  # 20-100% range
+                            self.progress_bar.setValue(progress)
+                            QApplication.processEvents()
+
+                        except Exception as e:
+                            raise Exception(f"Error importing batch: {str(e)}")
+
+                # Ensure progress bar shows 100%
+                self.progress_bar.setValue(100)
+
+                self.log_message(
+                    f"Successfully imported {total_rows} rows to table '{table_name}'"
+                )
+
+                # Show success message
+                self.show_success_message()
+
+            except Exception as e:
+                self.log_message(f"Error during import: {str(e)}")
+                QMessageBox.critical(
+                    self,
+                    "Import Error",
+                    f"Failed to import data: {str(e)}"
+                )
+
+            finally:
+                # Reset UI state
+                self.progress_bar.hide()
+                self.import_btn.setEnabled(True)
+
+        except Exception as e:
+            self.log_message(f"Error preparing import: {str(e)}")
+            QMessageBox.critical(
+                self,
+                "Import Error",
+                f"Failed to prepare data for import: {str(e)}"
+            )
+            self.progress_bar.hide()
+            self.import_btn.setEnabled(True)
+
     def resizeEvent(self, event):
         """Handle window resize events"""
         super().resizeEvent(event)
@@ -433,28 +591,9 @@ class MainWindow(QMainWindow):
             header = self.preview_table.horizontalHeader()
             header.setStretchLastSection(True)
 
-    def import_data(self):
-        """Handle data import with progress tracking"""
-        self.import_btn.setEnabled(False)
-        self.progress_bar.show()
-        self.progress_bar.setValue(0)
-
-        # Simulate progress (replace with actual import logic)
-        self.progress = 0
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_progress)
-        self.timer.start(100)
-
-    def update_progress(self):
-        """Update progress bar during import"""
-        self.progress += 1
-        self.progress_bar.setValue(self.progress)
-
-        if self.progress >= 100:
-            self.timer.stop()
-            self.progress_bar.hide()
-            self.import_btn.setEnabled(True)
-            self.show_success_message()
+    def log_message(self, message):
+        """Add a message to the log display"""
+        self.logger.info(message)
 
     def show_success_message(self):
         """Show success message with modern styling"""
@@ -479,6 +618,3 @@ class MainWindow(QMainWindow):
         """)
         msg.exec()
 
-    def log_message(self, message):
-        """Add a message to the log display"""
-        self.logger.info(message)
