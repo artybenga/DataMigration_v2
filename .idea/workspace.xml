@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="312b9c49-de56-4e85-a457-fffcc3373301" name="Changes" comment="added test data for test suite">
+    <list default="true" id="312b9c49-de56-4e85-a457-fffcc3373301" name="Changes" comment="more polished updated GUI">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gui/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/gui/main_window.py" afterDir="false" />
     </list>
@@ -47,6 +47,13 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
+  },
+  "keyToStringList": {
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
@@ -187,8 +194,27 @@
       <option name="project" value="LOCAL" />
       <updated>1748091643388</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="more polished updated GUI">
+      <option name="closed" value="true" />
+      <created>1748223240313</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1748223240313</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="New Data Migration App" />
@@ -197,7 +223,8 @@
     <MESSAGE value="added test suite" />
     <MESSAGE value="added readme file for test suite" />
     <MESSAGE value="added test data for test suite" />
-    <option name="LAST_COMMIT_MESSAGE" value="added test data for test suite" />
+    <MESSAGE value="more polished updated GUI" />
+    <option name="LAST_COMMIT_MESSAGE" value="more polished updated GUI" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

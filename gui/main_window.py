@@ -21,7 +21,7 @@ class ModernFrame(QFrame):
         self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
         self.setStyleSheet("""
             ModernFrame {
-                background-color: white;
+                background-color: #eaeaea;
                 border: 1px solid #E0E0E0;
                 border-radius: 8px;
             }
@@ -108,7 +108,7 @@ class MainWindow(QMainWindow):
     def init_ui(self):
         """Initialize the user interface with modern styling and proper resizing"""
         self.setWindowTitle("Data Importer")
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(1000, 850)
 
         # Set the main style
         self.setStyleSheet("""
@@ -132,7 +132,6 @@ class MainWindow(QMainWindow):
             }
             QHeaderView::section {
                 background-color: #F5F5F5;
-                padding: 8px;
                 border: none;
                 border-right: 1px solid #E0E0E0;
                 border-bottom: 1px solid #E0E0E0;
@@ -153,6 +152,24 @@ class MainWindow(QMainWindow):
             QComboBox::drop-down {
                 border: none;
                 padding-right: 10px;
+            }
+            QComboBox QListView {
+                background-color: #eaeaea;
+                border: 1px solid #E0E0E0;
+                padding: 4px;
+                selection-color: white;
+                selection-background-color: #2962FF;
+            }
+            QComboBox::item {
+                background-color: #eaeaea;
+                color: #000000;
+            }
+            QComboBox::item:hover {
+                background-color: #E3F2FD;
+            }
+            QComboBox::item:selected {
+                background-color: #2962FF;
+                color: white;
             }
             QLabel {
                 color: #424242;
