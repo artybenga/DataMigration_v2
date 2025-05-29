@@ -94,8 +94,8 @@ class TestDatabaseConfigGetConnectionString(unittest.TestCase):
         'DB_USER': 'testuser',
         'DB_PASSWORD': 'testpass',
         'DB_HOST': 'localhost',
-        'DB_PORT': '5432'
-        # DB_NAME is missing
+        'DB_PORT': '5432',
+        'DB_NAME': 'None'
     })
     def test_get_connection_string_partial_env_vars(self, mock_load_dotenv):
         """Test connection string generation with some missing environment variables."""
@@ -103,10 +103,8 @@ class TestDatabaseConfigGetConnectionString(unittest.TestCase):
         db_config = DatabaseConfig(self.mock_logger)
         expected_conn_string = "postgresql://testuser:testpass@localhost:5432/None"
 
-        # Remove the var when the test suite is run as a whole as it will
-        # have been set in other tests and not removed
-        if os.environ['DB_NAME']:
-            del os.environ['DB_NAME']
+        # Remove the DB_NAME var
+        del os.environ['DB_NAME']
 
         # Act
         result = db_config.get_connection_string()
@@ -471,70 +469,60 @@ class TestDatabaseConfigCreateTableFromDf(unittest.TestCase):
         self.assertFalse(result)
         self.mock_logger.error.assert_called_once()
 
+    @patch('utils.db_config.load_dotenv')
+    @patch('pandas.DataFrame.to_sql')
+    @patch('pandas.DataFrame.replace')
+    def test_create_table_from_df_handles_nat_nan(self, mock_replace, mock_to_sql, mock_load_dotenv):
+        """Test that NaT and NaN values trigger replacement methods."""
+        # Arrange
+        df = pd.DataFrame({
+            'name': ['Alice', np.nan, 'Charlie'],
+            'date': [pd.Timestamp('2023-01-01'), pd.NaT, pd.Timestamp('2023-03-01')],
+            'value': [1.5, np.nan, 3.0]
+        })
+        table_name = 'test_table'
 
-@patch('utils.db_config.load_dotenv')
-@patch('pandas.DataFrame.to_sql')
-@patch('pandas.DataFrame.replace')
-@patch('pandas.DataFrame.where')
-def test_create_table_from_df_handles_nat_nan(self, mock_where, mock_replace, mock_to_sql, mock_load_dotenv):
-    """Test that NaT and NaN values trigger replacement methods."""
-    # Arrange
-    df = pd.DataFrame({
-        'name': ['Alice', np.nan, 'Charlie'],
-        'date': [pd.Timestamp('2023-01-01'), pd.NaT, pd.Timestamp('2023-03-01')],
-        'value': [1.5, np.nan, 3.0]
-    })
-    table_name = 'test_table'
+        # Mock the return values to simulate the chain of operations
+        mock_replace.return_value = df  # replace() returns a DataFrame
+        mock_to_sql.return_value = None
 
-    # Mock the return values to simulate the chain of operations
-    mock_replace.return_value = df  # replace() returns a DataFrame
-    mock_where.return_value = df  # where() returns a DataFrame
-    mock_to_sql.return_value = None
+        # Act
+        result = self.db_config.create_table_from_df(df, table_name)
 
-    # Act
-    result = self.db_config.create_table_from_df(df, table_name)
+        # Assert
+        self.assertTrue(result)
 
-    # Assert
-    self.assertTrue(result)
+        # Verify that replace was called with NaT -> None
+        mock_replace.assert_called_once_with({pd.NaT: None, np.nan: None})
 
-    # Verify that replace was called with NaT -> None
-    mock_replace.assert_called_once_with({pd.NaT: None})
+        # Verify to_sql was called
+        mock_to_sql.assert_called_once_with(table_name, self.db_config.engine, if_exists='replace', index=False)
 
-    # Verify that where was called (for NaN handling)
-    mock_where.assert_called_once()
+    @patch('utils.db_config.load_dotenv')
+    @patch('pandas.DataFrame.to_sql')
+    @patch('pandas.DataFrame.replace')
+    def test_create_table_from_df_no_nan_values(self, mock_replace, mock_to_sql, mock_load_dotenv):
+        """Test behavior when no NaT/NaN values are present."""
+        # Arrange - DataFrame with no NaN or NaT values
+        df = pd.DataFrame({
+            'name': ['Alice', 'Bob', 'Charlie'],
+            'date': [pd.Timestamp('2023-01-01'), pd.Timestamp('2023-02-01'), pd.Timestamp('2023-03-01')],
+            'value': [1.5, 2.5, 3.0]
+        })
+        table_name = 'test_table'
 
-    # Verify to_sql was called
-    mock_to_sql.assert_called_once_with(table_name, self.db_config.engine, if_exists='replace', index=False)
+        # Mock the return values
+        mock_replace.return_value = df
+        mock_to_sql.return_value = None
 
+        # Act
+        result = self.db_config.create_table_from_df(df, table_name)
 
-@patch('utils.db_config.load_dotenv')
-@patch('pandas.DataFrame.to_sql')
-@patch('pandas.DataFrame.replace')
-@patch('pandas.DataFrame.where')
-def test_create_table_from_df_no_nan_values(self, mock_where, mock_replace, mock_to_sql, mock_load_dotenv):
-    """Test behavior when no NaT/NaN values are present."""
-    # Arrange - DataFrame with no NaN or NaT values
-    df = pd.DataFrame({
-        'name': ['Alice', 'Bob', 'Charlie'],
-        'date': [pd.Timestamp('2023-01-01'), pd.Timestamp('2023-02-01'), pd.Timestamp('2023-03-01')],
-        'value': [1.5, 2.5, 3.0]
-    })
-    table_name = 'test_table'
+        # Assert
+        self.assertTrue(result)
 
-    # Mock the return values
-    mock_replace.return_value = df
-    mock_where.return_value = df
-    mock_to_sql.return_value = None
-
-    # Act
-    result = self.db_config.create_table_from_df(df, table_name)
-
-    # Assert
-    self.assertTrue(result)
-
-    # Even with no NaN values, replace and where are still called
-    # (the method always calls them regardless of content)
-    mock_replace.assert_called_once_with({pd.NaT: None})
-    mock_where.assert_called_once()
-    mock_to_sql.assert_called_once_with(table_name, self.db_config.engine, if_exists='replace', index=False)
+        # Even with no NaN values, replace and where are still called
+        # (the method always calls them regardless of content)
+        mock_replace.assert_called_once_with({pd.NaT: None, np.nan: None})
+        mock_to_sql.assert_called_once_with(table_name, self.db_config.engine, if_exists='replace', index=False)
 
