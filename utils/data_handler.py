@@ -33,3 +33,4 @@ class DataHandler:
         except Exception as e:
             self.logger.error(f"Error loading file {file_path}: {str(e)}")
             raise
+
