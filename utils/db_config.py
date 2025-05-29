@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import logging
 from sqlalchemy import create_engine, text
 import pandas as pd
+import numpy as np
 
 
 class DatabaseConfig:
@@ -29,9 +30,12 @@ class DatabaseConfig:
         # Clean column names
         df.columns = [col.replace(' ', '_').replace('-', '_') for col in df.columns]
 
-        # Replace NaT/NaN with None
-        df = df.replace({pd.NaT: None})
-        df = df.where(pd.notnull(df), None)
+        # Replace NaT/NaN with None more explicitly
+        df = df.replace({pd.NaT: None, np.nan: None})
+
+        # Additional cleanup to ensure all NaN-like values become None
+        for col in df.columns:
+            df[col] = df[col].where(pd.notnull(df[col]), None)
 
         try:
             df.to_sql(table_name, self.engine, if_exists='replace', index=False)
@@ -40,3 +44,4 @@ class DatabaseConfig:
         except Exception as e:
             self.logger.error(f"Error creating table {table_name}: {str(e)}")
             return False
+

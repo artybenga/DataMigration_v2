@@ -9,7 +9,7 @@ from utils.logger_config import setup_logger
 def main():
     # Setup logging
     current_time = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-    log_file = f'data_import_{current_time}.log'
+    log_file = f'logs/data_import_{current_time}.log'
     logger = setup_logger(log_file)
 
     logger.info("Application started")
