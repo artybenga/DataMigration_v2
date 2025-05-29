@@ -1,8 +1,6 @@
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pandas as pd
-from pathlib import Path
-import pytest
 from utils.data_handler import DataHandler
 
 

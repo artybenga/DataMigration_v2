@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="312b9c49-de56-4e85-a457-fffcc3373301" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_data_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_data_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/data_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/data_handler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_gui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,6 +55,15 @@
     "Python tests.Python tests for test_db_config2.TestDatabaseConfigCreateTableFromDf.test_create_table_from_df_handles_nat_nan.executor": "Debug",
     "Python tests.Python tests for test_db_config2.TestDatabaseConfigGetConnectionString.executor": "Run",
     "Python tests.Python tests for test_db_config2.TestDatabaseConfigGetConnectionString.test_get_connection_string_partial_env_vars.executor": "Debug",
+    "Python tests.Python tests for test_gui.TestMainWindow.test_import_data_success.executor": "Run",
+    "Python tests.Python tests for test_gui.TestMainWindow.test_main_window_init.executor": "Run",
+    "Python tests.Python tests for test_gui.TestMainWindowEdgeCases.test_resize_event.executor": "Run",
+    "Python tests.Python tests for test_gui.TestMainWindowImport.executor": "Run",
+    "Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_column_name_cleaning.executor": "Debug",
+    "Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_database_connection_failure.executor": "Run",
+    "Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_success.executor": "Run",
+    "Python tests.Python tests for test_gui.TestMainWindowPreview.test_update_preview_with_data.executor": "Run",
+    "Python tests.Python tests for test_gui.TestModernFrame.test_modern_frame_init_without_title.executor": "Debug",
     "Python tests.Python tests for test_gui.test_window_title.executor": "Run",
     "Python tests.Python tests in test_data_handler.py.executor": "Run",
     "Python tests.Python tests in test_db_config.py.executor": "Run",
@@ -83,7 +91,7 @@
       <recent name="$PROJECT_DIR$/tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests in test_data_handler.py">
+  <component name="RunManager" selected="Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_column_name_cleaning">
     <configuration name="DM_v2" type="PythonConfigurationType" factoryName="Python">
       <module name="DataMigration_v2" />
       <option name="ENV_FILES" value="" />
@@ -107,7 +115,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_db_config.TestDatabaseConfigCreateTableFromDf.test_create_table_from_df_handles_nat_nan" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_gui.TestMainWindowImport" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="DataMigration_v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -118,11 +126,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_db_config.TestDatabaseConfigCreateTableFromDf.test_create_table_from_df_handles_nat_nan&quot;" />
+      <option name="_new_target" value="&quot;test_gui.TestMainWindowImport&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_gui.test_window_title" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_gui.TestMainWindowImport.test_import_data_column_name_cleaning" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="DataMigration_v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -133,11 +141,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_gui.test_window_title&quot;" />
+      <option name="_new_target" value="&quot;test_gui.TestMainWindowImport.test_import_data_column_name_cleaning&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_data_handler.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_gui.TestMainWindowImport.test_import_data_database_connection_failure" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="DataMigration_v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -148,11 +156,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_data_handler.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_gui.TestMainWindowImport.test_import_data_database_connection_failure&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_db_config.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_gui.TestMainWindowImport.test_import_data_success" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="DataMigration_v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -163,11 +171,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_db_config.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_gui.TestMainWindowImport.test_import_data_success&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_gui.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_gui.TestMainWindowPreview.test_update_preview_with_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="DataMigration_v2" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -178,17 +186,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_gui.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_gui.TestMainWindowPreview.test_update_preview_with_data&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests in test_data_handler.py" />
-        <item itemvalue="Python tests.Python tests for test_gui.test_window_title" />
-        <item itemvalue="Python tests.Python tests in test_gui.py" />
-        <item itemvalue="Python tests.Python tests in test_db_config.py" />
-        <item itemvalue="Python tests.Python tests for test_db_config.TestDatabaseConfigCreateTableFromDf.test_create_table_from_df_handles_nat_nan" />
+        <item itemvalue="Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_column_name_cleaning" />
+        <item itemvalue="Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_database_connection_failure" />
+        <item itemvalue="Python tests.Python tests for test_gui.TestMainWindowPreview.test_update_preview_with_data" />
+        <item itemvalue="Python tests.Python tests for test_gui.TestMainWindowImport" />
+        <item itemvalue="Python tests.Python tests for test_gui.TestMainWindowImport.test_import_data_success" />
       </list>
     </recent_temporary>
   </component>
@@ -312,7 +320,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748502518314</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="- fix data_handler test suite">
+      <option name="closed" value="true" />
+      <created>1748503345925</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1748503345925</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -339,7 +355,8 @@
     <MESSAGE value="- moved clean_column_names to a utils file and rejigged calls&#10;- removed user detail from logs" />
     <MESSAGE value="- fix db_config test suite&#10;- small change to db_config.create_table_from_df method&#10;- amend logging to be inside a logs folder" />
     <MESSAGE value="- fix db_config test suite" />
-    <option name="LAST_COMMIT_MESSAGE" value="- fix db_config test suite" />
+    <MESSAGE value="- fix data_handler test suite" />
+    <option name="LAST_COMMIT_MESSAGE" value="- fix data_handler test suite" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -353,6 +370,11 @@
           <url>file://$PROJECT_DIR$/tests/test_db_config.py</url>
           <line>217</line>
           <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/tests/test_gui.py</url>
+          <line>447</line>
+          <option name="timeStamp" value="53" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
